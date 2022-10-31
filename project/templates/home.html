@@ -2,17 +2,20 @@
 
 {% block content %}
 
-<a href="{% url 'create-room' %}">Create Room</a>
+<a href="{% url 'create-room' %}">Create Room</a> <br><br><br>
 
     {% for i  in room %}
 
-    <h1>@{{i.host}}</h1>
+        <a href="{% url 'update-room' i.id %}">Edit</a>
+        <a href="{% url 'delete-room' i.id %}">Delete</a>
 
-    <h1><a href="room/{{i.id}}">{{i.id}}-{{i.name}}</a></h1>
+        <h1>@{{i.host}}</h1>
 
-    <h1>{{i.topic}}</h1>
+        <h1><a href="room/{{i.id}}">{{i.id}}-{{i.name}}</a></h1>
 
-    <hr>
+        <h1>{{i.topic}}</h1>
+
+        <hr>
 
     {% endfor %}
     
