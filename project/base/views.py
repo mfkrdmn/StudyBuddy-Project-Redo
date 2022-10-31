@@ -1,18 +1,35 @@
-from multiprocessing import context
 from .forms import *
 from django.shortcuts import render, redirect
 from .models import *
+from django.db.models import Q
 # Create your views here.
 
 def home(request):
 
-    room = Room.objects.all()
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+
+    #buradaki q herhangi bir karakter olabilir. Değişim yapıldığında html de de değişmeli
+
+    room = Room.objects.filter(
+        Q(topic__name__icontains=q) |
+        Q(name__icontains=q) |
+        Q(description__icontains=q)
+    )
+
+    #The icontains lookup is used to get records that contains a specified value.
+    #The icontains lookup is case insensitive.
 
     message = Message.objects.all()
 
+    topic = Topic.objects.all()
+
+    room_count = room.count()
+
     context = {
         "room" : room,
-        "message" : message
+        "message" : message,
+        "topics" : topic,
+        "room_count" : room_count,
     }
 
     return render(request,"home.html", context)
