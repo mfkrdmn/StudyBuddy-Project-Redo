@@ -32,17 +32,17 @@
     
     <div class="">
 
-        <h5>{{room_count}} rooms available </h5>
+        <h2> <b>{{room_count}}</b> rooms available </h2>
 
         <a href="{% url 'create-room' %}">Create Room</a> <br><br><br>
 
         <div class="">
             
             {% for i  in room %}
-
+                {% if request.user == i.host %}
                 <a href="{% url 'update-room' i.id %}">Edit</a>
                 <a href="{% url 'delete-room' i.id %}">Delete</a>
-
+                {% endif %}
                 <h1>@{{i.host}}</h1>
 
                 <h1><a href="room/{{i.id}}">{{i.id}}-{{i.name}}</a></h1>
