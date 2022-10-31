@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<a href="{% url 'create-room' %}">Create Room</a>
+
     {% for i  in room %}
 
     <h1>@{{i.host}}</h1>
