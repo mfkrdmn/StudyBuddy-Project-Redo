@@ -5,6 +5,7 @@ from .models import *
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
@@ -44,8 +45,23 @@ def room(request,pk):
 
     room = Room.objects.get(id=pk)
 
+    room_messages = room.message_set.all().order_by("-created")
+
+    participants = room.participants.all()
+
+    if request.method == 'POST':
+        message = Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body') #html body name li inputtan alınan veri
+        )
+        room.participants.add(request.user)
+        return redirect('room', pk=room.id)
+
     context = {
         "room" : room,
+        "room_messages" : room_messages,
+        "participants" : participants
     }
 
     return render(request,"room.html", context)
@@ -104,10 +120,26 @@ def deleteRoom(request, pk):
 
     return render(request, 'delete.html', {'obj': room})
 
+
+@login_required(login_url='login')
+def deleteMessage(request, pk):
+
+    message = Message.objects.get(id=pk)
+
+    if request.user != message.user:
+        return HttpResponse('Your are not allowed here!!')
+
+    if request.method == 'POST':
+        
+        message.delete()
+        return redirect("home")
+    return render(request, 'delete.html', {'obj': message})
+
+
 def loginPage(request):
-    # page = 'login'
-    # if request.user.is_authenticated:
-    #      return redirect('home')
+    page = 'login'
+    if request.user.is_authenticated:
+          return redirect('home')
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -127,9 +159,12 @@ def loginPage(request):
         else:
             messages.error(request, 'Username OR password does not exist')
 
-    context = {}
+    context = {
+        "page" : page
+    }
     return render(request, 'login_register.html', context)
 
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
