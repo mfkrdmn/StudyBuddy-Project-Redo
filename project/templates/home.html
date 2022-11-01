@@ -5,7 +5,7 @@
 <style>
     .home-container{
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns:1fr 3fr 1fr;
     }
 </style>
 
@@ -43,7 +43,7 @@
                 <a href="{% url 'update-room' i.id %}">Edit</a>
                 <a href="{% url 'delete-room' i.id %}">Delete</a>
                 {% endif %}
-                <h1>@{{i.host}}</h1>
+                <h1> <a href="profile/{{i.host.id}}">@{{i.host}}</a></h1>
 
                 <h1><a href="room/{{i.id}}">{{i.id}}-{{i.name}}</a></h1>
 
@@ -55,6 +55,21 @@
 
         </div>
 
+    </div>
+
+    <div class="">
+        Recent Activity
+        <hr>
+        {% for i in  room_messages %}
+
+            <div class="">
+                <small> <b>@{{i.user}}</b>  {{i.created|timesince}}</small>
+                <h3>replied to {{i.room}}</h3>
+                <p>{{i.body}}</p>
+                <hr>
+            </div>
+
+        {% endfor %}
     </div>
 
 </div>
